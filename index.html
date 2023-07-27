@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div style="font-size: 40px; font-weight: 800; font-family:Arial, Helvetica, sans-serif; margin: auto; width:fit-content;">Service Worker</div>
+
+    <div
+      id="fetchButton"
+      style="
+        width: fit-content;
+        padding: 20px;
+        font-size: 20px;
+        border: 2px solid black;
+        border-radius: 5%;
+        cursor: pointer;
+        width: fit-content;
+        margin: auto;
+
+      "
+    >
+      Get Data
+    </div>
+    <div id="productsContainer"></div>
+
+    <script>
+      const fetchButton = document.getElementById("fetchButton");
+      const productsContainer = document.getElementById("productsContainer");
+
+      fetchButton.addEventListener("click", () => {
+        const id = prompt("Enter your required id for products");
+        fetch(`https://dummyjson.com/products/${id}`)
+          .then((res) => res.json())
+          .then((data) => {
+            const dataKeys = Object.keys(data);
+            const list = dataKeys.map((d) => {
+              const dataContianer = document.createElement("div");
+              const divStyle = dataContianer.style;
+              // divStyle.border = "1px solid black";
+              divStyle.padding = "4px";
+              dataContianer.innerText = "";
+              dataContianer.innerText = `${d}: ${data[d]}`;
+              return dataContianer;
+            });
+            const dataContianerRoot = document.createElement("div");
+            dataContianerRoot.style.margin = "10px 0";
+            dataContianerRoot.border='1px solid black'
+            list.forEach((singleNode) => dataContianerRoot.append(singleNode));
+            productsContainer.innerText = "";
+            productsContainer.append(dataContianerRoot);
+          });
+      });
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register("service-worker.js")
+          .then((registration) => {
+            console.log("service worker is registered", registration);
+          })
+          .catch((err) =>
+            console.log("service worker registration failed:", err)
+          );
+
+        navigator.serviceWorker.ready.then((msg) => {
+          console.log("service worker is ready");
+        });
+      }
+    </script>
+  </body>
+</html>
